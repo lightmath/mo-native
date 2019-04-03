@@ -154,7 +154,7 @@ public class JSBridge {
             @Override
             public void onShareSuccess(String postId) {
                 // 分享成功
-                ConchJNI.RunJS("app.SDK.fbShareSuc('"+postId+")'");
+                ConchJNI.RunJS("app.SDK.fbShareSuc('"+postId+"')");
             }
 
             @Override

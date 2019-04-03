@@ -1,7 +1,6 @@
 package mo;
 
 import android.app.Application;
-import android.view.WindowManager;
 
 import com.eskyfun.sdk.EskyfunSDK;
 import com.t.common.SdkUser;

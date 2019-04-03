@@ -73,9 +73,9 @@ public class MainActivity extends Activity{
 //        mPlugin.game_plugin_set_option("gameUrl", "http://192.168.5.135:9876/index.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://test1.webgame.zhaouc.com/moli/client/native.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/client/native_debug.html");
-        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/client/native.html");
+//        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/client/native.html");
 
-//        mPlugin.game_plugin_set_option("gameUrl", "http://192.168.1.137/native.html");
+        mPlugin.game_plugin_set_option("gameUrl", "http://192.168.1.137/native.html");
         mPlugin.game_plugin_init(3);
         View gameView = mPlugin.game_plugin_get_view();
         this.setContentView(gameView);
