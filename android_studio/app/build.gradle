@@ -5,6 +5,14 @@ repositories {
     }
 }
 android {
+    signingConfigs {
+        config {
+            keyAlias 'androiddebugkey'
+            keyPassword 'jpKFcAbvYAzsGeIhBdvrjyD70J8='
+            storeFile file('D:/apps/native/mo_native/android_studio/moli_new.jks')
+            storePassword 'jpKFcAbvYAzsGeIhBdvrjyD70J8='
+        }
+    }
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
     useLibrary 'org.apache.http.legacy'
@@ -15,13 +23,16 @@ android {
         versionCode 2
         versionName "1903291231"
     }
-    sourceSets.main{
+    sourceSets.main {
         jniLibs.srcDir 'libs'
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.config
         }
     }
 }
@@ -30,7 +41,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support:appcompat-v7:27.0.2'
-//    implementation(name: 'fastjson-1.2.56', ext: 'jar')
+    //    implementation(name: 'fastjson-1.2.56', ext: 'jar')
     //    dependencies { //下例中name请修改为实际文件名
     implementation(name: 'eskyfun-1.0.7.5', ext: 'aar')
     implementation(name: 'play-services-basement-11.8.0', ext: 'aar')

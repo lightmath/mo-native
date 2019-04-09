@@ -32,6 +32,7 @@ public class App extends Application {
                 App.token = user.getToken();
                 App.user = user;
                 if(App.isInited){
+//                    JSBridge.hideSplash();
                     ConchJNI.RunJS("app.SDK.onLoginSuc('"+user.toCacheJson()+"')");
                 }
 
@@ -41,6 +42,7 @@ public class App extends Application {
             public void didLogout() {
                 App.userId = null;
                 App.token = null;
+                JSBridge.showSplash();
                 if(App.isInited) {
                     ConchJNI.RunJS("app.SDK.onLogout()");
                 }

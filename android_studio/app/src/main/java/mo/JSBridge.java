@@ -24,6 +24,15 @@ public class JSBridge {
     public static Handler m_Handler = new Handler(Looper.getMainLooper());
     public static Activity mMainActivity = null;
 
+    public static void showSplash() {
+        m_Handler.post(
+                new Runnable() {
+                    public void run() {
+                        MainActivity.mSplashDialog.show();
+                    }
+                });
+    }
+
     public static void hideSplash() {
         m_Handler.post(
                 new Runnable() {

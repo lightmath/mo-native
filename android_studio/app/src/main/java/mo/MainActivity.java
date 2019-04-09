@@ -21,9 +21,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.ValueCallback;
+
+import com.eskyfun.cgsg.R;
 
 
 public class MainActivity extends Activity{
@@ -74,13 +77,19 @@ public class MainActivity extends Activity{
 //        mPlugin.game_plugin_set_option("gameUrl", "http://test1.webgame.zhaouc.com/moli/client/native.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/client/native_debug.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/client/native.html");
+        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/update/client/native.html");
 
-        mPlugin.game_plugin_set_option("gameUrl", "http://192.168.1.137/native.html");
-        mPlugin.game_plugin_init(3);
+
+//        mPlugin.game_plugin_set_option("gameUrl", "http://192.168.1.137/native.html");
+        mPlugin.game_plugin_init(5);
         View gameView = mPlugin.game_plugin_get_view();
-        this.setContentView(gameView);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
 
+//        this.addContentView(,params);
+//        this.addContentView(gameView,params);
+        this.addContentView(gameView,params);
+        this.getWindow().setBackgroundDrawableResource(R.drawable.layabox);
 //        JSBridge.sdkLogin();
         isLoad=true;
     }

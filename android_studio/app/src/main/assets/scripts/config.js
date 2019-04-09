@@ -98,8 +98,8 @@ else if (nMem > 1048576) {
 if(window.loadingView)
 {
     window.loadingView.loadingAutoClose=false;//true代表当动画播放完毕，自动进入游戏。false为开发者手动控制
-    window.loadingView.bgColor("#FFFFFF");//设置背景颜色
-    window.loadingView.setFontColor("#000000");//设置字体颜色
+//    window.loadingView.bgColor("#FFFFFF");//设置背景颜色
+//    window.loadingView.setFontColor("#000000");//设置字体颜色
 //    window.loadingView.setTips([""]);//设置tips数组，会随机出现
     window.loadingView.showTextInfo = false;
 }
