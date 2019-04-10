@@ -6,16 +6,16 @@ import android.util.Log;
 public class UpdateCallback implements IUpdateCallback {
 	
 	static private final String DIALOG_DOWNLOAD_ERROR_TITLE = "下载失败";
-	static private final String DIALOG_DOWNLOAD_ERROR_MSG = "DOWNLOAD UPDATE FILE FAILED";
-	static private final String DIALOG_DOWNLOAD_BUTTON_TRY = "RETRY";
-	static private final String DIALOG_DOWNLOAD_BUTTON_CANCEL= "CANCEL";
+	static private final String DIALOG_DOWNLOAD_ERROR_MSG = "更新包下载失败";
+	static private final String DIALOG_DOWNLOAD_BUTTON_TRY = "重试";
+	static private final String DIALOG_DOWNLOAD_BUTTON_CANCEL= "取消";
 	
-	static private final String DIALOG_UPDATE_TITLE = "UPDATE";
-	static private final String DIALOG_UPDATE_MSG = "确认更新[";
+	static private final String DIALOG_UPDATE_TITLE = "更新";
+	static private final String DIALOG_UPDATE_MSG = "是否更新到最新版本";
 	static private final String DIALOG_UPDATE_MSGEND = "]?";
-	static private final String DIALOG_UPDATE_PROGRESS= "UPDATE PROGRESS";
-	static private final String DIALOG_UPDATE_BUTTON_TRY = "UPDATE START";
-	static private final String DIALOG_UPDATE_BUTTON_CANCEL= "UPDATE CANCEL";
+	static private final String DIALOG_UPDATE_PROGRESS= "正在更新";
+	static private final String DIALOG_UPDATE_BUTTON_TRY = "开始更新";
+	static private final String DIALOG_UPDATE_BUTTON_CANCEL= "取消更新";
 	
 	ProgressDialog updateProgressDialog = null;
 	public void downloadProgressChanged(int progress) {
@@ -64,7 +64,7 @@ public class UpdateCallback implements IUpdateCallback {
 			DialogHelper.Confirm(
 					AutoUpdateAPK.getInstance().getContext(),
 					DIALOG_UPDATE_TITLE,
-					DIALOG_UPDATE_MSG + updateInfo+ DIALOG_UPDATE_MSGEND,DIALOG_UPDATE_BUTTON_TRY,
+					DIALOG_UPDATE_MSG,DIALOG_UPDATE_BUTTON_TRY,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog,	int which) {

@@ -21,7 +21,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 27
         versionCode 2
-        versionName "1903291231"
+        versionName "xm1904101129"
     }
     sourceSets.main {
         jniLibs.srcDir 'libs'

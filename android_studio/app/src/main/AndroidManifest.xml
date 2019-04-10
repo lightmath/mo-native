@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.eskyfun.cgsg"
     android:versionCode="2"
-    android:versionName="1903291231" >
+    android:versionName="xm1904101129" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -39,7 +39,23 @@
             </intent-filter>
         </activity>
         <meta-data android:name="com.facebook.sdk.ApplicationId"  android:value="@string/facebook_app_id"/>
+        <provider
 
+            android:name="android.support.v4.content.FileProvider"
+
+            android:authorities="com.eskyfun.cgsg.fileProvider"
+
+            android:grantUriPermissions="true"
+
+            android:exported="false">
+
+            <meta-data
+
+                android:name="android.support.FILE_PROVIDER_PATHS"
+
+                android:resource="@xml/file_paths"/>
+
+        </provider>
 
     </application>
 

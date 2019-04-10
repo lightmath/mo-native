@@ -1,5 +1,26 @@
 package layaair.autoupdateversion;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
+import android.webkit.ValueCallback;
+
+import com.eskyfun.cgsg.BuildConfig;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,24 +31,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Random;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.webkit.ValueCallback;
+
 import layaair.autoupdateversion.data.VersionData;
 import layaair.game.config.config;
 
@@ -46,7 +54,7 @@ public class AutoUpdateAPK {
 
 	private layaair.autoupdateversion.IUpdateCallback m_callback;
 	private String m_szDownloadAPKName;// = DOWNLOAD_APK_NAME;
-	private String m_szDownloadPath;
+//	private String m_szDownloadPath;
 	private int m_iVersionCode = 0;
 	private int m_iProgressValue = 0;
 	private Context m_context = null;
@@ -62,7 +70,7 @@ public class AutoUpdateAPK {
 		m_callback = new UpdateCallback();
 		m_context = p_context;
 		this.m_szDownloadAPKName = config.GetInstance().getProperty("UpdateAPKFileName");
-		this.m_szDownloadPath = config.GetInstance().getProperty("UpdateDownloadPath");
+//		this.m_szDownloadPath = config.GetInstance().getProperty("UpdateDownloadPath");
 		setVersionCode(p_context);
 		downloadVersionXML(config.GetInstance().getProperty("ApkUpdateUrl"));
 	}
@@ -120,12 +128,26 @@ public class AutoUpdateAPK {
 	Handler updateHandler = new UpdateHandle();
 
 	public void updateAPK() {
-		Intent intent = new Intent(Intent.ACTION_VIEW);
 
-		intent.setDataAndType(
-				Uri.fromFile(new File(m_szDownloadPath, m_szDownloadAPKName)),
-				"application/vnd.android.package-archive");
+		File fileAPK = new File(
+				Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+				, m_szDownloadAPKName);
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		// 由于没有在Activity环境下启动Activity,设置下面的标签
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		if(Build.VERSION.SDK_INT>=24) { //判读版本是否在7.0以上
+			//参数1 上下文, 参数2 Provider主机地址 和配置文件中保持一致   参数3  共享的文件
+			Uri apkUri = FileProvider.getUriForFile(m_context, BuildConfig.APPLICATION_ID + ".fileProvider", fileAPK);
+			//添加这一句表示对目标应用临时授权该Uri所代表的文件
+			intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+			intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+		}else{
+			intent.setDataAndType(Uri.fromFile(fileAPK),
+					"application/vnd.android.package-archive");
+		}
 		m_context.startActivity(intent);
+
+
 	}
 
 	public void downloadAPK() {
@@ -144,13 +166,13 @@ public class AutoUpdateAPK {
 
 					int length = conn.getContentLength();
 					InputStream is = conn.getInputStream();
-
-					File fileAPK = new File(m_szDownloadPath,
-							m_szDownloadAPKName);
+					File fileAPK = new File(
+							Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+							, m_szDownloadAPKName);
 
 					if (fileAPK.exists()) {
 						boolean flag = false;
-                        flag = fileAPK.delete();
+						flag = fileAPK.delete();
 						if(flag == true)
 						{
 							Log.i("","删除apk成功");

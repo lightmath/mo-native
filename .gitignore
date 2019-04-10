@@ -1,3 +1,5 @@
 /android_studio/.idea
 /wkwebview
 /ios
+/android_studio/app/release/*.apk
+*.apk

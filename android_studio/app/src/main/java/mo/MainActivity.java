@@ -1,11 +1,4 @@
 package mo;
-import java.io.InputStream;
-
-import layaair.autoupdateversion.AutoUpdateAPK;
-import layaair.game.IMarket.IPlugin;
-import layaair.game.IMarket.IPluginRuntimeProxy;
-import layaair.game.Market.GameEngine;
-import layaair.game.config.config;
 
 import android.Manifest;
 import android.app.Activity;
@@ -21,12 +14,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.ValueCallback;
 
 import com.eskyfun.cgsg.R;
+
+import java.io.InputStream;
+
+import layaair.autoupdateversion.AutoUpdateAPK;
+import layaair.game.IMarket.IPlugin;
+import layaair.game.IMarket.IPluginRuntimeProxy;
+import layaair.game.Market.GameEngine;
+import layaair.game.config.config;
 
 
 public class MainActivity extends Activity{
@@ -58,14 +58,15 @@ public class MainActivity extends Activity{
                 }
             }
         }
+
         mSplashDialog = new SplashDialog(this);
         mSplashDialog.showSplash();
 
         /*
          * 如果不想使用更新流程，可以屏蔽checkApkUpdate函数，直接打开initEngine函数
          */
-//        checkApkUpdate(this);
-        initEngine();
+        checkApkUpdate(this);
+//        initEngine();
     }
     public void initEngine()
     {
@@ -83,12 +84,11 @@ public class MainActivity extends Activity{
 //        mPlugin.game_plugin_set_option("gameUrl", "http://192.168.1.137/native.html");
         mPlugin.game_plugin_init(5);
         View gameView = mPlugin.game_plugin_get_view();
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
 
 //        this.addContentView(,params);
 //        this.addContentView(gameView,params);
-        this.addContentView(gameView,params);
+        this.setContentView(gameView);
         this.getWindow().setBackgroundDrawableResource(R.drawable.layabox);
 //        JSBridge.sdkLogin();
         isLoad=true;
