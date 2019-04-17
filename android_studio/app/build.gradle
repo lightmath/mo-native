@@ -11,6 +11,16 @@ android {
             keyPassword 'jpKFcAbvYAzsGeIhBdvrjyD70J8='
             storeFile file('D:/apps/native/mo_native/android_studio/moli_new.jks')
             storePassword 'jpKFcAbvYAzsGeIhBdvrjyD70J8='
+//            v1SigningEnabled true
+//            v2SigningEnabled true
+        }
+        cfg_release {
+            keyAlias 'androiddebugkey'
+            keyPassword 'jpKFcAbvYAzsGeIhBdvrjyD70J8='
+            storeFile file('D:/apps/native/mo_native/android_studio/moli_new.jks')
+            storePassword 'jpKFcAbvYAzsGeIhBdvrjyD70J8='
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
     compileSdkVersion 27
@@ -20,8 +30,8 @@ android {
         applicationId "com.eskyfun.cgsg"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 2
-        versionName "xm1904101129"
+        versionCode 6
+        versionName "xm1904151042"
     }
     sourceSets.main {
         jniLibs.srcDir 'libs'
@@ -30,6 +40,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.cfg_release
         }
         debug {
             signingConfig signingConfigs.config

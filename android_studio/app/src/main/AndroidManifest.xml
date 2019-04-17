@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.eskyfun.cgsg"
-    android:versionCode="2"
-    android:versionName="xm1904101129" >
+    android:versionCode="6"
+    android:versionName="xm1904151042" >
 
     <uses-sdk
         android:minSdkVersion="8"

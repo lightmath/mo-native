@@ -17,8 +17,6 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-import layaair.game.browser.ConchJNI;
-
 
 public class JSBridge {
     public static Handler m_Handler = new Handler(Looper.getMainLooper());
@@ -99,7 +97,7 @@ public class JSBridge {
     public static void startSDK(){
         App.isInited = true;
         if(App.user!= null){
-            ConchJNI.RunJS("app.SDK.onLoginSuc('"+App.user.toCacheJson()+"')");
+            App.RunJS("app.SDK.onLoginSuc('"+App.user.toCacheJson()+"')");
         }else{
             sdkLogin();
         }
@@ -118,7 +116,10 @@ public class JSBridge {
         EskyfunSDK.getInstance().popLoginView();
     }
     public static void sdkLogout() {
+        App.isInited = false;
+        App.clearToken();
         EskyfunSDK.getInstance().logout();
+//        EskyfunSDK.getInstance().popLoginView();
     }
 
 
@@ -163,18 +164,17 @@ public class JSBridge {
             @Override
             public void onShareSuccess(String postId) {
                 // 分享成功
-                ConchJNI.RunJS("app.SDK.fbShareSuc('"+postId+"')");
+                App.RunJS("app.SDK.fbShareSuc('"+postId+"')");
             }
 
             @Override
             public void onShareError(Exception e) {
-                e.printStackTrace();
-                ConchJNI.RunJS("app.SDK.fbShareError('"+e.getMessage()+"')");
+                App.RunJS("app.SDK.fbShareError('"+e.getMessage()+"')");
             }
 
             @Override
             public void onShareCancel() {
-                ConchJNI.RunJS("app.SDK.fbShareCancel()");
+                App.RunJS("app.SDK.fbShareCancel()");
             }
         });
     }
@@ -191,7 +191,7 @@ public class JSBridge {
                             String roleId = friend.getString("role_id");
                             String serverId = friend.getString("server_id");
                             String sdkUserId = friend.getString("user_id");
-                            ConchJNI.RunJS("app.SDK.fbFriendInGame('"+friend.toString()+"')");
+                            App.RunJS("app.SDK.fbFriendInGame('"+friend.toString()+"')");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -207,10 +207,10 @@ public class JSBridge {
             @Override
             public void onGetFriends(JSONArray array) {
                 if (array != null) {
-                    ConchJNI.RunJS("app.SDK.fbFriendsInvitable('"+array.toString()+"')");
+                    App.RunJS("app.SDK.fbFriendsInvitable('"+array.toString()+"')");
                 }else{
                     JSONArray resp = new JSONArray();
-                    ConchJNI.RunJS("app.SDK.fbFriendsInvitable('"+resp.toString()+"')");
+                    App.RunJS("app.SDK.fbFriendsInvitable('"+resp.toString()+"')");
                 }
 
             }
@@ -222,13 +222,13 @@ public class JSBridge {
             @Override
             public void onInviteSuccess() {
                 // 邀请发送成功
-                ConchJNI.RunJS("app.SDK.fbInviteSuc()");
+                App.RunJS("app.SDK.fbInviteSuc()");
             }
 
             @Override
             public void onInviteCancel() {
                 // 邀请发送失败
-                ConchJNI.RunJS("app.SDK.fbInviteFail()");
+                App.RunJS("app.SDK.fbInviteFail()");
             }
         });
     }
