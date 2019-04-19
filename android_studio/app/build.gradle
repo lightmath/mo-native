@@ -5,29 +5,11 @@ repositories {
     }
 }
 android {
-    signingConfigs {
-        config {
-            keyAlias 'androiddebugkey'
-            keyPassword 'jpKFcAbvYAzsGeIhBdvrjyD70J8='
-            storeFile file('D:/apps/native/mo_native/android_studio/moli_new.jks')
-            storePassword 'jpKFcAbvYAzsGeIhBdvrjyD70J8='
-//            v1SigningEnabled true
-//            v2SigningEnabled true
-        }
-        cfg_release {
-            keyAlias 'androiddebugkey'
-            keyPassword 'jpKFcAbvYAzsGeIhBdvrjyD70J8='
-            storeFile file('D:/apps/native/mo_native/android_studio/moli_new.jks')
-            storePassword 'jpKFcAbvYAzsGeIhBdvrjyD70J8='
-            v1SigningEnabled true
-            v2SigningEnabled true
-        }
-    }
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
-        applicationId "com.eskyfun.cgsg"
+        applicationId "com.ictitan.union"
         minSdkVersion 15
         targetSdkVersion 27
         versionCode 6
@@ -40,11 +22,23 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.cfg_release
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
         }
         debug {
-            signingConfig signingConfigs.config
+
+            debuggable true
+            jniDebuggable false
+            renderscriptDebuggable false
         }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/MANIFEST.MF'
     }
 }
 
@@ -54,12 +48,18 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.0.2'
     //    implementation(name: 'fastjson-1.2.56', ext: 'jar')
     //    dependencies { //下例中name请修改为实际文件名
-    implementation(name: 'eskyfun-1.0.7.5', ext: 'aar')
-    implementation(name: 'play-services-basement-11.8.0', ext: 'aar')
-    implementation('com.facebook.android:facebook-login:[4,5)', {
-        exclude group: 'com.parse.bolts', module: 'bolts-applinks'
-    })
-    implementation('com.facebook.android:facebook-share:[4,5)', {
-        exclude group: 'com.parse.bolts', module: 'bolts-applinks'
-    })
+//    implementation(name: 'eskyfun-1.0.7.5', ext: 'aar')
+//    implementation(name: 'play-services-basement-11.8.0', ext: 'aar')
+//    implementation('com.facebook.android:facebook-login:[4,5)', {
+//        exclude group: 'com.parse.bolts', module: 'bolts-applinks'
+//    })
+//    implementation('com.facebook.android:facebook-share:[4,5)', {
+//        exclude group: 'com.parse.bolts', module: 'bolts-applinks'
+//    })
+
+    android {
+        lintOptions {
+            abortOnError false
+        }
+    }
 }

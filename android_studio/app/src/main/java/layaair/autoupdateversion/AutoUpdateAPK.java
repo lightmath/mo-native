@@ -13,8 +13,6 @@ import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.webkit.ValueCallback;
 
-import com.eskyfun.cgsg.BuildConfig;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -54,7 +52,7 @@ public class AutoUpdateAPK {
 
 	private layaair.autoupdateversion.IUpdateCallback m_callback;
 	private String m_szDownloadAPKName;// = DOWNLOAD_APK_NAME;
-//	private String m_szDownloadPath;
+	private String m_szDownloadPath;
 	private int m_iVersionCode = 0;
 	private int m_iProgressValue = 0;
 	private Context m_context = null;
@@ -128,26 +126,12 @@ public class AutoUpdateAPK {
 	Handler updateHandler = new UpdateHandle();
 
 	public void updateAPK() {
-
-		File fileAPK = new File(
-				Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-				, m_szDownloadAPKName);
 		Intent intent = new Intent(Intent.ACTION_VIEW);
-		// 由于没有在Activity环境下启动Activity,设置下面的标签
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		if(Build.VERSION.SDK_INT>=24) { //判读版本是否在7.0以上
-			//参数1 上下文, 参数2 Provider主机地址 和配置文件中保持一致   参数3  共享的文件
-			Uri apkUri = FileProvider.getUriForFile(m_context, BuildConfig.APPLICATION_ID + ".fileProvider", fileAPK);
-			//添加这一句表示对目标应用临时授权该Uri所代表的文件
-			intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-			intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-		}else{
-			intent.setDataAndType(Uri.fromFile(fileAPK),
-					"application/vnd.android.package-archive");
-		}
+
+		intent.setDataAndType(
+				Uri.fromFile(new File(m_szDownloadPath, m_szDownloadAPKName)),
+				"application/vnd.android.package-archive");
 		m_context.startActivity(intent);
-
-
 	}
 
 	public void downloadAPK() {

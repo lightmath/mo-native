@@ -10,8 +10,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import com.eskyfun.cgsg.R;
-
+import com.ictitan.union.R;
 
 public class SplashDialog extends Dialog {
     private Context mContext;

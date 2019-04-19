@@ -1,4 +1,11 @@
 package mo;
+import java.io.InputStream;
+
+import layaair.autoupdateversion.AutoUpdateAPK;
+import layaair.game.IMarket.IPlugin;
+import layaair.game.IMarket.IPluginRuntimeProxy;
+import layaair.game.Market.GameEngine;
+import layaair.game.config.config;
 
 import android.Manifest;
 import android.app.Activity;
@@ -8,30 +15,27 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.ValueCallback;
 
-import java.io.InputStream;
-import java.lang.reflect.Method;
-
-import layaair.autoupdateversion.AutoUpdateAPK;
-import layaair.game.IMarket.IPlugin;
-import layaair.game.IMarket.IPluginRuntimeProxy;
-import layaair.game.Market.GameEngine;
-import layaair.game.config.config;
-import libs.StatusBarUtil;
-import libs.SystemBarTintManager;
+import com.ictitan.union.IctitanUnionSDK;
+import com.ictitan.union.callback.IIctitanUnionListener;
+import com.ictitan.union.callback.IctitanUnionPermissionCallback;
+import com.ictitan.union.constant.RoleEventType;
+import com.ictitan.union.constant.UnionSDKCallbackCode;
+import com.ictitan.union.entity.IctitanUnionPaymentParam;
+import com.ictitan.union.entity.IctitanUnionRoleInfoParam;
+import com.ictitan.union.entity.UnionSdkUser;
+import com.ictitan.union.util.FileData;
+import com.ictitan.union.util.JJJson;
 
 
 public class MainActivity extends Activity{
@@ -40,7 +44,14 @@ public class MainActivity extends Activity{
     private IPluginRuntimeProxy mProxy = null;
     boolean isLoad=false;
     boolean isExit=false;
+    public static UnionSdkUser user;
+    public static boolean isInited;
+    private Activity activity;
     public static SplashDialog mSplashDialog;
+    public static String UID;
+    public static String Token;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,23 +59,6 @@ public class MainActivity extends Activity{
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         JSBridge.mMainActivity = this;
-//        View decorView = getWindow().getDecorView();
-//        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                       | View.SYSTEM_UI_FLAG_FULLSCREEN;
-//         decorView.setSystemUiVisibility(uiOptions);
-
-//        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
-////            View v = this.getWindow().getDecorView();
-////            v.setSystemUiVisibility(View.GONE);
-//        } else if (Build.VERSION.SDK_INT >= 19) {
-//            //for new api versions.
-//            View decorView = getWindow().getDecorView();
-//            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
-//            decorView.setSystemUiVisibility(uiOptions);
-//        }
-
-
         if (Build.VERSION.SDK_INT >= 23) {
             int REQUEST_CODE_CONTACT = 101;
             String[] permissions = {
@@ -79,7 +73,6 @@ public class MainActivity extends Activity{
                 }
             }
         }
-
         mSplashDialog = new SplashDialog(this);
         mSplashDialog.showSplash();
 
@@ -87,133 +80,115 @@ public class MainActivity extends Activity{
          * 如果不想使用更新流程，可以屏蔽checkApkUpdate函数，直接打开initEngine函数
          */
 //        checkApkUpdate(this);
+        activity = this;
+        PlatformInit("");
         initEngine();
     }
 
-    /**
-     * 检查是否存在虚拟按键栏
-     * @param context
-     * @return
-     */
-    public static boolean hasNavBar(Context context) {
-        Resources res = context.getResources();
-        int resourceId = res.getIdentifier("config_showNavigationBar", "bool", "android");
-        if (resourceId != 0) {
-            boolean hasNav = res.getBoolean(resourceId);
-            // check override flag
-            String sNavBarOverride = getNavBarOverride();
-            if ("1".equals(sNavBarOverride)) {
-                hasNav = false;
-            } else if ("0".equals(sNavBarOverride)) {
-                hasNav = true;
+    public void PlatformInit(String initextension) {
+        // 回调
+        IctitanUnionSDK.getInstance().setSDKListener(new IIctitanUnionListener() {
+            // 初始化回调
+            @Override
+            public void IctitanUnionInitCallback(int code, String result) {
+                switch (code) {
+                    case UnionSDKCallbackCode.CODE_INIT_SUCCESS:
+                        //初始化成功。初始化成功后才可调用登陆接口
+                        Log.e("UnionInitCallback", "CODE_INIT_SUCCESS");
+                        break;
+                    default:
+                        Log.e("UnionInitCallback", "code="+code);
+                        break;
+                }
             }
-            return hasNav;
-        } else { // fallback
-            return !ViewConfiguration.get(context).hasPermanentMenuKey();
-        }
-    }
 
-    //    /**
-//     * 隐藏虚拟按键，并且全屏
-//     */
-//    protected void hideBottomUIMenu(){
-//        //隐藏虚拟按键，并且全屏
-//        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
-//            View v = this.getWindow().getDecorView();
-//            v.setSystemUiVisibility(View.GONE);
-//        } else if (Build.VERSION.SDK_INT >= 19) {
-//            //for new api versions.
-//            View decorView = getWindow().getDecorView();
-//            int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-////                    | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-//                    | View.SYSTEM_UI_FLAG_IMMERSIVE;
-//            decorView.setSystemUiVisibility(uiOptions);
-//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-//        }
-//    }
-    protected void hideBottomUIMenu() {
-        //隐藏虚拟按键，并且全屏
-        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
-            View v = this.getWindow().getDecorView();
-            v.setSystemUiVisibility(View.GONE);
-        } else if (Build.VERSION.SDK_INT >= 19) {
-
-            Window _window = getWindow();
-            WindowManager.LayoutParams params = _window.getAttributes();
-            params.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            _window.setAttributes(params);
-        }
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            View decorView = getWindow().getDecorView();
-            decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
-    }
-
-    /**
-     * 判断虚拟按键栏是否重写
-     * @return
-     */
-    private static String getNavBarOverride() {
-        String sNavBarOverride = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
-                Class c = Class.forName("android.os.SystemProperties");
-                Method m = c.getDeclaredMethod("get", String.class);
-                m.setAccessible(true);
-                sNavBarOverride = (String) m.invoke(null, "qemu.hw.mainkeys");
-            } catch (Throwable e) {
+            // 登陆回调
+            @Override
+            public void IctitanUnionLoginCallback(int code, String result, UnionSdkUser unionSdkUser) {
+                switch (code) {
+                    case UnionSDKCallbackCode.CODE_LOGIN_SUCCESS:
+                        MainActivity.UID = unionSdkUser.getUserId();
+                        MainActivity.Token = unionSdkUser.getToken();
+                        MainActivity.user = unionSdkUser;
+                        String gameid = unionSdkUser.getAppId();
+                        String Channelid = unionSdkUser.getChannelId();
+                        Log.e("LOGIN_SUCCESS", " uid = " + UID + "\n" + " token = " + Token + "\n");
+                        JSBridge.onLoginSuc();
+                        break;
+                    case UnionSDKCallbackCode.CODE_LOGIN_FAIL:
+                        Log.e("UnionLoginCallback", "login fail:" + result);
+                        break;
+                    case UnionSDKCallbackCode.CODE_LOGIN_CANCEL:
+                        Log.e("UnionLoginCallback", "login cancel:" + result);
+                        break;
+                    case UnionSDKCallbackCode.CODE_LOGIN_TIMEOUT:
+                        Log.e("UnionLoginCallback", "login timeout:" + result);
+                        break;
+                    default:
+                        break;
+                }
             }
-        }
-        return sNavBarOverride;
+
+            // 支付回调
+            @Override
+            public void IctitanUnionPayCallback(int code, String result) {
+                switch (code) {
+                    case UnionSDKCallbackCode.CODE_PAY_SUCCESS:
+                        Log.e("UnionPayCallback", "pay success:" + result);
+                        break;
+                    case UnionSDKCallbackCode.CODE_PAY_FAIL:
+                        Log.e("UnionPayCallback", "pay fail:" + result);
+                        break;
+                    case UnionSDKCallbackCode.CODE_PAY_CANCEL:
+                        Log.e("UnionPayCallback", "pay cancel:" + result);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void IctitanUnionLogoutCallback(int code, String result) {
+                switch (code) {
+                    case UnionSDKCallbackCode.CODE_LOGOUT_SUCCESS:
+                        Log.e("UnionLogoutCallbac", "logout success:" + result);
+                        break;
+                    case UnionSDKCallbackCode.CODE_LOGOUT_FAIL:
+                        Log.e("UnionLogoutCallbac", "logout fail:" + result);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void IctitanUnionExitGameCallback(int code, String result) {
+                switch (code) {
+                    case UnionSDKCallbackCode.CODE_EXIT_SUCCESS:
+                        Log.e("UnionExitGameCallb", "exit success:" + result);
+                        finish();
+                        System.exit(0);
+                        break;
+                    case UnionSDKCallbackCode.CODE_EXIT_FAIL:
+                        Log.e("UnionExitGameCallb", "exit fail:" + result);
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+
+            @Override
+            public void IctitanUnionShareToSocialNetworkCallback(int code, String result) {
+                JSBridge.onFaceBookShareBack(code, result);
+            }
+        });
+        // 初始化
+        IctitanUnionSDK.getInstance().init(activity);
     }
-
-
 
     public void initEngine()
     {
-//        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) {
-//            View v = this.getWindow().getDecorView();
-//            v.setSystemUiVisibility(View.GONE);
-//        } else if (Build.VERSION.SDK_INT >= 19) {
-//            //for new api versions.
-//            View decorView = getWindow().getDecorView();
-//            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-//            decorView.setSystemUiVisibility(uiOptions);
-//        }
-
-//        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
-//            View v = this.getWindow().getDecorView();
-//            v.setSystemUiVisibility(View.GONE);
-//        } else if (Build.VERSION.SDK_INT >= 19) {
-//            //for new api versions.
-//            View decorView = getWindow().getDecorView();
-//            int uiOptions = View.SYSTEM_UI_FLAG_IMMERSIVE
-//            // Set the content to appear under the system bars so that the
-//            // content doesn't resize when the system bars hide and show.
-//            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//            // Hide the nav bar and status bar
-//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
-//            decorView.setSystemUiVisibility(uiOptions);
-//        }
-
-
         mProxy = new RuntimeProxy(this);
         mPlugin = new GameEngine(this);
         mPlugin.game_plugin_set_runtime_proxy(mProxy);
@@ -222,54 +197,20 @@ public class MainActivity extends Activity{
 //        mPlugin.game_plugin_set_option("gameUrl", "http://test1.webgame.zhaouc.com/moli/client/native.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/client/native_debug.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/client/native.html");
-//        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/update/client/native.html");//对接服
-//        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/update/client/debug.html");
-        mPlugin.game_plugin_set_option("gameUrl", "http://mlbb.sg.cdn.mecheast.com/client/native.html");//正式服
+//        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/update/tyclient/client/native.html");
+        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/update/tgclient/client/native.html");
+//        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/update/dalishen/client/native.html");
 
 //        mPlugin.game_plugin_set_option("gameUrl", "http://192.168.1.137/native.html");
         mPlugin.game_plugin_init(5);
         View gameView = mPlugin.game_plugin_get_view();
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
-
-//        this.addContentView(,params);
-//        this.addContentView(gameView,params);
-
-        this.setContentView(gameView);
-//        this.hideBottomUIMenu();
-//        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-//        tintManager.setStatusBarTintEnabled(true);
-//        tintManager.setNavigationBarTintEnabled(true);
-//        setStatusBarLayoutStyle(this);
+        this.addContentView(gameView,params);
 //        this.getWindow().setBackgroundDrawableResource(R.drawable.layabox);
-//        JSBridge.sdkLogin();
-
+        JSBridge.sdkLogin();
         isLoad=true;
     }
-
-    public static void setStatusBarLayoutStyle(Context context){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            //透明状态栏
-            ((AppCompatActivity)context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            //透明导航栏
-            ((AppCompatActivity)context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            SystemBarTintManager tintManager = new SystemBarTintManager(((AppCompatActivity)context));
-            // 激活状态栏
-            tintManager.setStatusBarTintEnabled(true);
-            //判断是否需要更改状态栏颜色
-//            if(isChange){
-//                tintManager.setStatusBarTintResource(R.color.appMainColor);
-//            }else{
-//                tintManager.setStatusBarTintResource(android.R.color.white);
-//            }
-            ViewGroup mContentView = (ViewGroup) ((AppCompatActivity) context).getWindow().findViewById(((AppCompatActivity) context).getWindow().ID_ANDROID_CONTENT);
-            View mChildView = mContentView.getChildAt(0);
-            if (mChildView != null) {
-                //注意不是设置 ContentView 的 FitsSystemWindows, 而是设置 ContentView 的第一个子 View . 预留出系统 View 的空间.
-                mChildView.setFitsSystemWindows(true);
-            }
-        }
-    }
-
 
     public  boolean isOpenNetwork(Context context)
     {
@@ -278,6 +219,7 @@ public class MainActivity extends Activity{
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return connManager.getActiveNetworkInfo() != null && (connManager.getActiveNetworkInfo().isAvailable() && connManager.getActiveNetworkInfo().isConnected());
     }
+
     public void settingNetwork(final Context context, final int p_nType)
     {
         AlertDialog.Builder pBuilder = new AlertDialog.Builder(context);
@@ -350,26 +292,46 @@ public class MainActivity extends Activity{
             }
         });
     }
-    public void onActivityResult(int requestCode, int resultCode,Intent intent) {
+    public void onActivityResult(int requestCode, int resultCode,Intent data) {
         if (requestCode == AR_CHECK_UPDATE) {
             checkApkUpdate(this);
         }
+        IctitanUnionSDK.getInstance().onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
-    protected void onPause()
-    {
+
+    public void onPause() {
+        IctitanUnionSDK.getInstance().onPause();
         super.onPause();
         if(isLoad)mPlugin.game_plugin_onPause();
     }
-    //------------------------------------------------------------------------------
+
+    protected void onStart() {
+        IctitanUnionSDK.getInstance().onStart();
+        super.onStart();
+    }
+
     protected void onResume()
     {
+        IctitanUnionSDK.getInstance().onResume();
         super.onResume();
         if(isLoad)mPlugin.game_plugin_onResume();
 
     }
 
+    public void onNewIntent(Intent newIntent) {
+        IctitanUnionSDK.getInstance().onNewIntent(newIntent);
+        super.onNewIntent(newIntent);
+    }
+
+    public void onStop() {
+        IctitanUnionSDK.getInstance().onStop();
+        super.onStop();
+    }
+
     protected void onDestroy()
     {
+        IctitanUnionSDK.getInstance().onDestroy();
         super.onDestroy();
         if(isLoad)mPlugin.game_plugin_onDestory();
     }
@@ -378,5 +340,20 @@ public class MainActivity extends Activity{
     public boolean onKeyDown(int keyCode, KeyEvent event)
     {
         return super.onKeyDown(keyCode, event);
+    }
+
+    public void onRestart() {
+        IctitanUnionSDK.getInstance().onRestart();
+        super.onRestart();
+    }
+
+    public void onBackPressed() {
+        IctitanUnionSDK.getInstance().onBackPressed();
+        super.onBackPressed();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
