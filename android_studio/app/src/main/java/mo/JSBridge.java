@@ -140,8 +140,8 @@ public class JSBridge {
                                        String profession) {
 
         roleId = Long.decode(roleId).toString();
-        String level = "";
-        ConchJNI.RunJS("alert('" + profession + " "+serverId + " "+ serverName + " " + roleId + " " + roleName);
+        String level = "0";
+        ConchJNI.RunJS("alert('Create" + profession + " "+serverId + " "+ serverName + " " + roleId + " " + roleName +  "')");
         IctitanUnionSDK.getInstance().reportRoleInfo(new IctitanUnionRoleInfoParam(RoleEventType.Create, serverId, serverName, roleId, roleName, profession, level));
     }
 
@@ -163,7 +163,7 @@ public class JSBridge {
                                           String roleName,
                                           String level ) {
         roleId = Long.decode(roleId).toString();
-        ConchJNI.RunJS("alert('" + profession + " "+serverId + " "+ serverName + " " + roleId
+        ConchJNI.RunJS("alert('EnterGame" + profession + " "+serverId + " "+ serverName + " " + roleId
                 + " " + roleName + " "   + level +  "')");
         IctitanUnionSDK.getInstance().reportRoleInfo(new IctitanUnionRoleInfoParam(RoleEventType.EnterGame, serverId, serverName, roleId, roleName, profession, level));
     }
@@ -172,6 +172,7 @@ public class JSBridge {
         String shareId = "1001";
         Map<String,Object> shareParams = new HashMap<String ,Object>();
         shareParams.put("displayName", "你好啊");
+        ConchJNI.RunJS("alert('facebookShare" +  "')");
         IctitanUnionSDK.getInstance().shareToSocialNetwork(shareId, shareParams);
     }
 

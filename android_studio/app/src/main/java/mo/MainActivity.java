@@ -112,7 +112,7 @@ public class MainActivity extends Activity{
                         MainActivity.user = unionSdkUser;
                         String gameid = unionSdkUser.getAppId();
                         String Channelid = unionSdkUser.getChannelId();
-                        Log.e("LOGIN_SUCCESS", " uid = " + UID + "\n" + " token = " + Token + "\n");
+                        Log.e("LOGIN_SUCCESS", " MainActivity.UID = " + MainActivity.UID + "\n" + " token = " + Token + "\n");
                         JSBridge.onLoginSuc();
                         break;
                     case UnionSDKCallbackCode.CODE_LOGIN_FAIL:
@@ -198,7 +198,7 @@ public class MainActivity extends Activity{
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/client/native_debug.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/client/native.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/update/tyclient/client/native.html");
-        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/update/tgclient/client/native.html");
+        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/tg_client/native.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/update/dalishen/client/native.html");
 
 //        mPlugin.game_plugin_set_option("gameUrl", "http://192.168.1.137/native.html");
