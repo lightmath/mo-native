@@ -125,7 +125,14 @@ public class JSBridge {
         IctitanUnionSDK.getInstance().login();
     }
     public static void sdkLogout() {
+        ConchJNI.RunJS("alert('logout')");
+        MainActivity.clearToken();
+
         IctitanUnionSDK.getInstance().logout();
+    }
+
+    public static void onSdkLogoutBack() {
+        ConchJNI.RunJS("app.SDK.onLogoutSuc()");
     }
 
     public static void selectGameServer(final String serverID ,final String serverName) {

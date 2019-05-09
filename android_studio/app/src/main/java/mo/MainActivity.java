@@ -152,6 +152,7 @@ public class MainActivity extends Activity{
                 switch (code) {
                     case UnionSDKCallbackCode.CODE_LOGOUT_SUCCESS:
                         Log.e("UnionLogoutCallbac", "logout success:" + result);
+                        JSBridge.onSdkLogoutBack();
                         break;
                     case UnionSDKCallbackCode.CODE_LOGOUT_FAIL:
                         Log.e("UnionLogoutCallbac", "logout fail:" + result);
@@ -208,7 +209,7 @@ public class MainActivity extends Activity{
 
         this.addContentView(gameView,params);
 //        this.getWindow().setBackgroundDrawableResource(R.drawable.layabox);
-        JSBridge.sdkLogin();
+//        JSBridge.sdkLogin();
         isLoad=true;
     }
 
@@ -356,4 +357,12 @@ public class MainActivity extends Activity{
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+    public static void clearToken(){
+        UID = null;
+        Token = null;
+        user = null;
+        isInited = false;
+    }
+
 }
