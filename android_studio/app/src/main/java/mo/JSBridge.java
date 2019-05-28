@@ -110,6 +110,7 @@ public class JSBridge {
 
     public static void onLoginSuc() {
         String userstr = userToCacheJson(MainActivity.user);
+        Log.e("JSBridge", "onLoginSuc userstr="+userstr);
         ConchJNI.RunJS("app.SDK.onLoginSuc('"+userstr+"')");
     }
 
@@ -125,7 +126,7 @@ public class JSBridge {
         IctitanUnionSDK.getInstance().login();
     }
     public static void sdkLogout() {
-        ConchJNI.RunJS("alert('logout')");
+        Log.e("JSBridge","sdkLogout");
         MainActivity.clearToken();
 
         IctitanUnionSDK.getInstance().logout();
@@ -136,7 +137,7 @@ public class JSBridge {
     }
 
     public static void selectGameServer(final String serverID ,final String serverName) {
-        ConchJNI.RunJS("alert('"+serverID + " "+ serverName +"')");
+        Log.e("JSBridge","serverID="+serverID);
 //        IctitanUnionSDK.getInstance().reportGameServer(serverID, serverName);
     }
 
@@ -148,7 +149,8 @@ public class JSBridge {
 
         roleId = Long.decode(roleId).toString();
         String level = "0";
-        ConchJNI.RunJS("alert('Create" + profession + " "+serverId + " "+ serverName + " " + roleId + " " + roleName +  "')");
+//        ConchJNI.RunJS("alert('Create" + profession + " "+serverId + " "+ serverName + " " + roleId + " " + roleName +  "')");
+        Log.e("JSBridge","Create="+profession + " "+serverId + " "+ serverName + " " + roleId + " " + roleName);
         IctitanUnionSDK.getInstance().reportRoleInfo(new IctitanUnionRoleInfoParam(RoleEventType.Create, serverId, serverName, roleId, roleName, profession, level));
     }
 
@@ -170,8 +172,10 @@ public class JSBridge {
                                           String roleName,
                                           String level ) {
         roleId = Long.decode(roleId).toString();
-        ConchJNI.RunJS("alert('EnterGame" + profession + " "+serverId + " "+ serverName + " " + roleId
-                + " " + roleName + " "   + level +  "')");
+//        ConchJNI.RunJS("alert('EnterGame" + profession + " "+serverId + " "+ serverName + " " + roleId
+//                + " " + roleName + " "   + level +  "')");
+        Log.e("JSBridge","EnterGame " + profession + " "+serverId + " "+ serverName + " " + roleId
+                + " " + roleName + " "   + level );
         IctitanUnionSDK.getInstance().reportRoleInfo(new IctitanUnionRoleInfoParam(RoleEventType.EnterGame, serverId, serverName, roleId, roleName, profession, level));
     }
 
@@ -179,7 +183,7 @@ public class JSBridge {
         String shareId = "1001";
         Map<String,Object> shareParams = new HashMap<String ,Object>();
         shareParams.put("displayName", "你好啊");
-        ConchJNI.RunJS("alert('facebookShare" +  "')");
+        Log.e("JSBridge","facebookShare");
         IctitanUnionSDK.getInstance().shareToSocialNetwork(shareId, shareParams);
     }
 
@@ -187,15 +191,15 @@ public class JSBridge {
         switch (code) {
             case UnionSDKCallbackCode.CODE_SHARE_SUCCESS:
                 Log.e("UnionShareSuccess", "share success:" + result);
-                ConchJNI.RunJS("app.SDK.fbShareSuc('"+result+"')");
+//                ConchJNI.RunJS("app.SDK.fbShareSuc('"+result+"')");
                 break;
             case UnionSDKCallbackCode.CODE_SHARE_FAIL:
                 Log.e("UnionShareFail", "share fail:" + result);
-                ConchJNI.RunJS("app.SDK.fbShareError('"+result+"')");
+//                ConchJNI.RunJS("app.SDK.fbShareError('"+result+"')");
                 break;
             case UnionSDKCallbackCode.CODE_SHARE_CANCEL:
                 Log.e("UnionShareCancel", "share cancel:" + result);
-                ConchJNI.RunJS("app.SDK.fbShareCancel()");
+//                ConchJNI.RunJS("app.SDK.fbShareCancel()");
                 break;
             default:
                 break;
@@ -272,8 +276,10 @@ public class JSBridge {
 // 进行支付
         IctitanUnionSDK.getInstance().pay(new IctitanUnionPaymentParam(serverId, serverName, roleId, roleName, roleLevel, roleProfession,
                 productId, description, amount, currency, extra));
-        ConchJNI.RunJS("alert('" + serverId+" "+ serverName+" "+ roleId +" "+ roleName+" "+ productId+" "+
-                description+" "+ amount+" "+ currency+" "+ extra +" "+ "')");
+//        ConchJNI.RunJS("alert('" + serverId+" "+ serverName+" "+ roleId +" "+ roleName+" "+ productId+" "+
+//                description+" "+ amount+" "+ currency+" "+ extra +" "+ "')");
+        Log.e("JSBridge","paymentDefault "+serverId+" "+ serverName+" "+ roleId +" "+ roleName+" "+ productId+" "+
+                description+" "+ amount+" "+ currency+" "+ extra);
     }
 
     /**
