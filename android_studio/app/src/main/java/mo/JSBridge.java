@@ -133,7 +133,7 @@ public class JSBridge {
     }
 
     public static void onSdkLogoutBack() {
-        ConchJNI.RunJS("app.SDK.onLogoutSuc()");
+//        ConchJNI.RunJS("app.SDK.onLogoutSuc()");
     }
 
     public static void selectGameServer(final String serverID ,final String serverName) {
@@ -272,7 +272,7 @@ public class JSBridge {
     public static void paymentDefault(String serverId,String serverName,String roleId,String roleName ,String roleLevel,String roleProfession,
                                       String productId ,String description,String amount,String extra ) {
 //        roleId = Long.decode(roleId).toString();
-        String currency = "USD";
+        String currency = "THB";
         float amountf = Float.parseFloat(amount);
 // 进行支付
         Log.e("JSBridge","paymentDefault "+serverId+" "+ serverName+" "+ roleId +" "+ roleName+" "+ productId+" "+
@@ -281,20 +281,6 @@ public class JSBridge {
         IctitanUnionSDK.getInstance().pay(new IctitanUnionPaymentParam(serverId, serverName, roleId, roleName, roleLevel, roleProfession,
                 productId, description, amountf, currency, extra));
     }
-
-//    public static void paymentDefault(String serverId,String serverName,String roleId,String roleName ,String roleLevel,String roleProfession,
-//                                      String productId ,String description,int amount,String extra ) {
-////        roleId = Long.decode(roleId).toString();
-//        String currency = "USD";
-//// 进行支付
-//        Log.e("JSBridge","paymentDefault "+serverId+" "+ serverName+" "+ roleId +" "+ roleName+" "+ productId+" "+
-//                description+" amount="+ amount+" "+ currency+" "+ extra);
-//
-////        IctitanUnionSDK.getInstance().pay(new IctitanUnionPaymentParam(serverId, serverName, roleId, roleName, roleLevel, roleProfession,
-////                productId, description, amount, currency, extra));
-////        ConchJNI.RunJS("alert('" + serverId+" "+ serverName+" "+ roleId +" "+ roleName+" "+ productId+" "+
-////                description+" "+ amount+" "+ currency+" "+ extra +" "+ "')");
-//    }
 
     /**
      * 把一个json格式转换成UnionSdkUser对象

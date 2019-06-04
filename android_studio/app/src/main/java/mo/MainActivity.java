@@ -199,7 +199,7 @@ public class MainActivity extends Activity{
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/client/native_debug.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/client/native.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/update/tyclient/client/native.html");
-//        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/tg_client/native-debug.html");
+//        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/tg_client/native.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://192.168.1.137/native.html");
         mPlugin.game_plugin_set_option("gameUrl", "https://cdn.moli.ictitan.com/client/native.html");
 //        mPlugin.game_plugin_set_option("gameUrl", "http://61.160.219.98/testmoli/update/dalishen/client/native.html");
@@ -226,9 +226,9 @@ public class MainActivity extends Activity{
     public void settingNetwork(final Context context, final int p_nType)
     {
         AlertDialog.Builder pBuilder = new AlertDialog.Builder(context);
-        pBuilder.setTitle("连接失败，请检查网络或与开发商联系").setMessage("是否对网络进行设置?");
+        pBuilder.setTitle("การเชื่อมต่อล้มเหลว กรุณาตรวจสอบเครือข่ายหรือติดต่อเจ้าหน้าที่").setMessage("ดำเนินการติดตั้งโดยใช้อินเตอร์เน็ต？");
         // 退出按钮
-        pBuilder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+        pBuilder.setPositiveButton("ใช่", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface p_pDialog, int arg1) {
                 Intent intent;
                 try {
@@ -250,7 +250,7 @@ public class MainActivity extends Activity{
                 }
             }
         });
-        pBuilder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+        pBuilder.setNegativeButton("ไม่", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
                 ((Activity)context).finish();
